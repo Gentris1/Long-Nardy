@@ -1,7 +1,8 @@
 import pygame
 
 from Board import get_white_up_cord, get_white_down_cord, get_black_down_cord, \
-    get_black_up_cord
+    get_black_up_cord, convert_white_x_to_board_x, convert_black_x_to_board_x
+from Cell import Cell
 
 width, height = 800, 600
 screen = pygame.display.set_mode((width, height))
@@ -67,59 +68,96 @@ class Screen:
 
     @staticmethod
     # Main loop
-    def draw_backgammon_board(board, player1, player2):
+    def draw_backgammon_board(board: list[Cell], player1, player2):
         screen.fill(BEIGE)
-        mouse_x = -1
-        if len(player1.dice_numbers) > 0:
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            if board_margin < mouse_x < board_margin + 12 * point_width and board_margin < mouse_y < height - board_margin:
-                if board_margin < mouse_y < (height - board_margin) / 2:
-                    mouse_x = get_white_up_cord(
-                        (mouse_x - board_margin) // point_width)
-                    print(mouse_x, mouse_y)
-                if board_margin < mouse_y and mouse_y >= (
-                        height - board_margin) / 2:
-                    mouse_x = get_white_up_cord(
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        white_mouse_x = -1
+        black_mouse_x = -1
+        if board_margin < mouse_x < board_margin + 12 * point_width and board_margin < mouse_y < height - board_margin:
+            if board_margin < mouse_y and mouse_y >= (
+                    height - board_margin) / 2:
+                if len(player1.dice_numbers)>0:
+                    white_mouse_x = get_white_up_cord(
                         (board_margin - mouse_x) // point_width)
-                    print(mouse_x, mouse_y)
+                else:
+                    black_mouse_x = (mouse_x - board_margin) // point_width
 
-        if player2.move_flag:
-            pass
+            if board_margin < mouse_y < (height - board_margin) / 2:
+                if len(player1.dice_numbers)>0:
+                    white_mouse_x = get_white_up_cord(
+                        (mouse_x - board_margin) // point_width)
+                else:
+                    black_mouse_x = get_black_down_cord(
+                        (-board_margin + mouse_x) // point_width)
 
-        print(mouse_x)
-        for i in range(12):
+        def draw_brown_triangles():
             color = DARK_BROWN if i % 2 == 0 else BROWN
 
-            Screen.draw_point(board_margin + i * point_width, board_margin,
-                              'down',
-                              color)
-            Screen.draw_point(board_margin + i * point_width,
-                              height - board_margin,
-                              'up',
-                              color)
+            x_point = board_margin + i * point_width
+            y_point = board_margin
 
-            for dice_number in player1.dice_numbers:
-                white_down_cord = get_white_down_cord(mouse_x)
-                white_up_cord = get_white_up_cord(mouse_x)
+            Screen.draw_point(x_point, y_point, 'down', color)
+            Screen.draw_point(x_point, height - y_point, 'up', color)
 
-                z = white_up_cord - dice_number
+        def draw_green_triangle_for_player(get_up_cord, get_down_cord, mouse_x,
+                                     convert_x_to_board_x, player, a1, b1,
+                                     direction1, a2, b2, direction2, func):
+            opponent_color = BLACK if player.color == WHITE else WHITE
+            for dice_number in player.dice_numbers:
+                down_cord = get_down_cord(mouse_x)
+                up_cord = get_up_cord(mouse_x)
+
+                z = up_cord - dice_number if player.color == WHITE else down_cord - dice_number
+
+                cell_x = convert_x_to_board_x(mouse_x + dice_number)
                 y_point = board_margin
 
-                if mouse_x + dice_number < 12 and len(board[white_up_cord].stack) > 0:
-                        direction = 'down'
-
-                elif 12 <= mouse_x + dice_number < 24 and (mouse_x < 12 and len(board[white_up_cord].stack) > 0 or mouse_x >= 12 and len(board[white_down_cord].stack) > 0):
-                        direction = 'up'
-                        z = -z - 1
+                if a1 <= cell_x < b1 and board[up_cord].color == player.color:
+                    direction = direction1
+                    if player.color == BLACK:
+                        z = func(z)
+                        y_point = -y_point + height
+                elif (a2 <= cell_x < b2 and
+                      (mouse_x < 12 and board[up_cord].color == player.color or
+                       mouse_x >= 12 and board[
+                           down_cord].color == player.color)):
+                    direction = direction2
+                    if player.color == WHITE:
+                        z = func(z)
                         y_point = -y_point + height
                 else:
                     continue
-                board[white_down_cord].accomodation = True
-                Screen.draw_point(
-                    board_margin + z * point_width,
-                    y_point,
-                    direction,
-                    (0, 255, 0))
+
+                if board[cell_x].color == opponent_color:
+                    continue
+
+                Screen.draw_point(board_margin + z * point_width, y_point,
+                                  direction, (0, 255, 0))
+
+        for i in range(12):
+            draw_brown_triangles()
+
+            draw_green_triangle_for_player(
+                get_up_cord=get_white_up_cord,
+                get_down_cord=get_white_down_cord,
+                mouse_x=white_mouse_x,
+                convert_x_to_board_x=convert_white_x_to_board_x,
+                player=player1,
+                a1=0, b1=12, direction1='down',
+                a2=12, b2=24, direction2='up',
+                func=lambda x: -x - 1
+            )
+
+            draw_green_triangle_for_player(
+                get_up_cord=get_black_up_cord,
+                get_down_cord=get_black_down_cord,
+                mouse_x=black_mouse_x,
+                convert_x_to_board_x=convert_black_x_to_board_x,
+                player=player2,
+                a1=12, b1=24, direction1='up',
+                a2=0, b2=12, direction2='down',
+                func=lambda x: get_black_down_cord(x)
+            )
 
         Screen.draw_lines()
         Screen.draw_checkers(board)
