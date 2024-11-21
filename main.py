@@ -55,10 +55,17 @@ game = Game(player1, player2)
 
 while running:
     game.make_move()
-    Screen.draw_backgammon_board(board.board, player1, player2)
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    Screen.draw_backgammon_board(board, player1, player2, mouse_x, mouse_y)
+    board.activate_cells(mouse_x, mouse_y, player1)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                Board.move_checker(board, player1, player2, mouse_x, mouse_y)
+                print(f"Левая кнопка мыши нажата на позиции {event.pos}")
 
 pygame.quit()
 sys.exit()

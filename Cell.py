@@ -3,13 +3,13 @@ from Checker import Checker
 
 class Cell:
     stack: list[Checker]
-    accommodation: bool
+    is_active: bool
     x: object
 
     def __init__(self, x):
         self.stack = []
         self.x = x
-        self.accommodation = False
+        self.is_active = False
 
     @property
     def color(self):
