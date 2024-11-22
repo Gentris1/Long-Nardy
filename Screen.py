@@ -112,7 +112,10 @@ class Screen:
         Screen.draw_checkers(board.board)
 
         if board.flag_keep:
-            Screen.draw_checker(mouse_x, mouse_y, WHITE)
+            if player1.move_flag:
+                Screen.draw_checker(mouse_x, mouse_y, WHITE)
+            else:
+                Screen.draw_checker(mouse_x, mouse_y, BLACK)
         pygame.display.flip()
 
     @staticmethod
@@ -124,18 +127,14 @@ class Screen:
         if board_margin < mouse_x < board_margin + 12 * point_width and board_margin < mouse_y < height - board_margin:
             if board_margin < mouse_y and mouse_y >= (
                     height - board_margin) / 2:
-                if len(player.dice_numbers) > 0:
-                    white_mouse_x = Coordinates.get_white_up_cord(
+                white_mouse_x = Coordinates.get_white_up_cord(
                         (board_margin - mouse_x) // point_width)
-                else:
-                    black_mouse_x = (mouse_x - board_margin) // point_width
+                black_mouse_x = (mouse_x - board_margin) // point_width
 
             if board_margin < mouse_y < (height - board_margin) / 2:
-                if len(player.dice_numbers) > 0:
-                    white_mouse_x = Coordinates.get_white_up_cord(
+                white_mouse_x = Coordinates.get_white_up_cord(
                         (mouse_x - board_margin) // point_width)
-                else:
-                    black_mouse_x = Coordinates.get_black_down_cord(
+                black_mouse_x = Coordinates.get_black_down_cord(
                         (-board_margin + mouse_x) // point_width)
         return black_mouse_x, white_mouse_x
 
@@ -212,6 +211,14 @@ class Screen:
                     z = func(z)
                     y_point = -y_point + height
             else:
+                if player.color == WHITE:
+                    if cell_x >= len(board.board):
+                        if len(board.stored_points) > 0:
+                            board.stored_points.popleft()
+                else:
+                    if cell_x < 0:
+                        if len(board.stored_points) > 0:
+                            board.stored_points.popleft()
                 continue
 
             if board.board[cell_x].color == opponent_color:

@@ -38,35 +38,52 @@ class Board:
                                                               player)
         for i in range(len(self.board)):
             if not self.flag_keep:
-                for dice_number in player.dice_numbers:
-                    if Coordinates.convert_white_x_to_board_x(white_mouse_x + dice_number) < len(self.board):
-                        self.board[Coordinates.convert_white_x_to_board_x(white_mouse_x + dice_number)].is_active = True
+                if player.color == (255, 255, 255):
+                    for dice_number in player.dice_numbers:
+                        if Coordinates.convert_white_x_to_board_x(white_mouse_x + dice_number) < len(self.board):
+                            self.board[Coordinates.convert_white_x_to_board_x(white_mouse_x + dice_number)].is_active = True
 
-                if (i != Coordinates.convert_white_x_to_board_x(white_mouse_x + player.dice_numbers[0])
-                        and i != Coordinates.convert_white_x_to_board_x(white_mouse_x + player.dice_numbers[1])):
-                    self.board[i].is_active = False
+                    if (i != Coordinates.convert_white_x_to_board_x(white_mouse_x + player.dice_numbers[0])
+                            and i != Coordinates.convert_white_x_to_board_x(white_mouse_x + player.dice_numbers[1])):
+                        self.board[i].is_active = False
+                else:
+                    for dice_number in player.dice_numbers:
+                        if Coordinates.convert_black_x_to_board_x(
+                                black_mouse_x + dice_number) < len(
+                                self.board):
+                            self.board[
+                                Coordinates.convert_black_x_to_board_x(
+                                    black_mouse_x + dice_number)].is_active = True
+
+                    if (i != Coordinates.convert_black_x_to_board_x(
+                            black_mouse_x + player.dice_numbers[0])
+                            and i != Coordinates.convert_black_x_to_board_x(
+                                black_mouse_x + player.dice_numbers[1])):
+                        self.board[i].is_active = False
 
         for i in range(0, len(self.board)):
             if self.board[i].is_active:
                 print(i)
 
     @staticmethod
-    def move_checker(board, player1, player2, mouse_x, mouse_y):
+    def move_checker(board, player, mouse_x, mouse_y):
         black_mouse_x, white_mouse_x = Screen.converte_coords(mouse_x, mouse_y,
-                                                              player1)
-        board_white_mouse_x = Coordinates.convert_white_x_to_board_x(
-            white_mouse_x)
+                                                              player)
+        if player.color == (255, 255, 255):
+            board_mouse_x = Coordinates.convert_white_x_to_board_x(white_mouse_x)
+        else:
+            board_mouse_x = Coordinates.convert_black_x_to_board_x(black_mouse_x)
 
         if board.flag_keep:
             for i in range(len(board.board)):
-                if board_white_mouse_x == i and board.board[i].is_active:
-                    board.board[board_white_mouse_x].stack.append(
+                if board_mouse_x == i and board.board[i].is_active:
+                    board.board[board_mouse_x].stack.append(
                         board.checker_keep)
                     for i in range(len(board.board)):
                         board.board[i].is_active = False
 
                     board.flag_keep = False
-        elif board.board[board_white_mouse_x].stack:
-            board.checker_keep = board.board[board_white_mouse_x].stack.pop()
-            board.board[board_white_mouse_x].is_active = True
+        elif board.board[board_mouse_x].stack:
+            board.checker_keep = board.board[board_mouse_x].stack.pop()
+            board.board[board_mouse_x].is_active = True
             board.flag_keep = True
