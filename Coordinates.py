@@ -10,6 +10,16 @@ class Coordinates:
         return Coordinates.get_white_down_cord(white_x)
 
     @staticmethod
+    def convert_board_x_to_white_x(board_x):
+        return Coordinates.convert_white_x_to_board_x(board_x)
+
+    @staticmethod
+    def convert_board_x_to_black_x(board_x):
+        if board_x < 12:
+            return 23 - board_x
+        return board_x - 12
+
+    @staticmethod
     def convert_black_x_to_board_x(black_x):
         if black_x < 12:
             return Coordinates.get_black_up_cord(black_x)
