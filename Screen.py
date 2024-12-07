@@ -14,6 +14,7 @@ BLACK = (0, 0, 0)
 BEIGE = (245, 222, 179)
 BROWN = (139, 69, 19)
 DARK_BROWN = (160, 82, 45)
+GREY = (200, 200, 200)
 
 point_width = width // 14
 point_height = height // 3
@@ -22,6 +23,9 @@ board_margin = point_width
 
 
 class Screen:
+    save_button_rect = pygame.Rect(10, 10, 80, 30)
+    load_button_rect = pygame.Rect(100, 10, 80, 30)
+
     @staticmethod
     def draw_point(x, y, direction, color):
         if direction == 'down':
@@ -68,11 +72,19 @@ class Screen:
                 Screen.draw_checker(x, y + i * checker_spacing, color)
 
     @staticmethod
-
     def draw_backgammon_board(board, player1: Player, player2, mouse_x, mouse_y):
         screen.fill(BEIGE)
+        font = pygame.font.SysFont(None, 24)
         black_mouse_x, white_mouse_x = Screen.converte_coords(mouse_x, mouse_y,
                                                               player1)
+
+        pygame.draw.rect(screen, GREY, Screen.save_button_rect)
+        pygame.draw.rect(screen, GREY, Screen.load_button_rect)
+
+        save_text = font.render('Save', True, BLACK)
+        load_text = font.render('Load', True, BLACK)
+        screen.blit(save_text, (Screen.save_button_rect.x + 20, Screen.save_button_rect.y + 5))
+        screen.blit(load_text, (Screen.load_button_rect.x + 20, Screen.load_button_rect.y + 5))
 
         def draw_brown_triangles():
             color = DARK_BROWN if i % 2 == 0 else BROWN
@@ -245,25 +257,26 @@ class Screen:
             for point in board.stored_points:
                 black_x, white_x = Screen.converte_coords(point['x'], point['y'], player)
                 if point['direction'] == 'down':
-                    black_x, white_x = Screen.converte_coords(point['x']+(point_width/2), point['y']+(point_width/2), player)
+                    black_x, white_x = Screen.converte_coords(point['x'] + (point_width / 2),
+                                                              point['y'] + (point_width / 2), player)
                 else:
                     black_x, white_x = Screen.converte_coords(point['x'] + (point_width / 2),
                                                               point['y'] - (point_width / 2), player)
                 white_x = int(white_x)
                 black_x = int(black_x)
-                #white_x += 1
-                #print(Coordinates.convert_black_x_to_board_x(black_x))
-                #print(mouse_x, mouse_y)
-                #print(f"coord: {Coordinates.convert_white_x_to_board_x(point['x'] + dice_num)}")
-                #print(point['x'])
+                # white_x += 1
+                # print(Coordinates.convert_black_x_to_board_x(black_x))
+                # print(mouse_x, mouse_y)
+                # print(f"coord: {Coordinates.convert_white_x_to_board_x(point['x'] + dice_num)}")
+                # print(point['x'])
 
                 if board.board[Coordinates.convert_white_x_to_board_x(white_x)].is_active and player.color == WHITE:
-                    #print()
+                    # print()
                     Screen.draw_point(point['x'], point['y'], point['direction'], (0, 255, 0))
-                    #print()
-                    #board.board[Coordinates.convert_black_x_to_board_x(black_x + dice_num)].is_active):
+                    # print()
+                    # board.board[Coordinates.convert_black_x_to_board_x(black_x + dice_num)].is_active):
 
-                    #print(f"dfdfdf{point['x']}")
+                    # print(f"dfdfdf{point['x']}")
                 if board.board[Coordinates.convert_black_x_to_board_x(black_x)].is_active and player.color == BLACK:
                     Screen.draw_point(point['x'], point['y'], point['direction'], (0, 255, 0))
 
@@ -280,7 +293,7 @@ class Screen:
                 z = down_cord - dice_num
 
             cell_x = convert_x_to_board_x(mouse_x + dice_num)
-            #if cell_x > 23:
+            # if cell_x > 23:
             #    cell_x = 23
             # if 0 <= cell_x < len(board.board) and not board.board[cell_x].is_active:
             #    if len(board.stored_points) > 0:
@@ -304,7 +317,7 @@ class Screen:
                     y_point = -y_point + height
 
             else:
-                #print(cell_x)
+                # print(cell_x)
                 # if player.color == WHITE:
                 #     if cell_x >= len(board.board):
                 #         if len(board.stored_points) > 0:
@@ -325,21 +338,17 @@ class Screen:
             if board.board[cell_x].color == opponent_color:
                 continue
 
-
-
-            #if cell_x == 23:
+            # if cell_x == 23:
             #    z = 12
-
 
             draw_x = board_margin + z * point_width
             # if 0 <= cell_x < len(board.board) and not board.board[cell_x].is_active:
             # return
             # print(draw_x)
 
-
             Screen.draw_point(draw_x, y_point, direction, (0, 255, 0))
 
-            #for i in range(len(board.board)):
+            # for i in range(len(board.board)):
             #    if board.board[i].is_active:
 
             black_x, white_x = Screen.converte_coords(draw_x, y_point, player)
@@ -356,4 +365,3 @@ class Screen:
             #         'y': y_point,
             #         'direction': direction
             #     })
-

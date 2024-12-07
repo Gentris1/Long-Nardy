@@ -1,3 +1,5 @@
+import pickle
+
 from Checker import Checker
 from Dice import Dice
 
@@ -8,13 +10,13 @@ class Game:
         self.player1 = player1
 
     def start_game(self, board):
-        #for i in range(15):
-            #checkerBlack = Checker((0, 0, 0), 0)
-            #board.add_checker(checkerBlack)
-            #checkerBlack = Checker((255, 255, 255), 0)
-            #board.add_checker(checkerBlack)
-        checkerBlack = Checker((0, 0, 0), 0)
-        board.add_checker(checkerBlack)
+        for i in range(15):
+            checkerBlack = Checker((0, 0, 0), 0)
+            board.add_checker(checkerBlack)
+            checkerBlack = Checker((255, 255, 255), 0)
+            board.add_checker(checkerBlack)
+        #checkerBlack = Checker((0, 0, 0), 0)
+        #board.add_checker(checkerBlack)
         # checkerBlack = Checker((0, 0, 0), 0)
         # board.add_checker(checkerBlack)
         # checkerBlack = Checker((0, 0, 0), 17)
@@ -22,8 +24,8 @@ class Game:
         # checkerBlack = Checker((0, 0, 0), 15)
         # board.add_checker(checkerBlack)
 
-        checkerBlack = Checker((255, 255, 255), 0)
-        board.add_checker(checkerBlack)
+        #checkerBlack = Checker((255, 255, 255), 0)
+        #board.add_checker(checkerBlack)
         # checkerBlack = Checker((255, 255, 255), 0)
         # board.add_checker(checkerBlack)
     def make_move(self):
@@ -55,3 +57,23 @@ class Game:
         self.player2.dice_numbers = self.player2.remaining_moves.copy()
 
         self.start_game(board)
+    def save_game(self, board, player1, player2):
+        game_state = {
+            'board': board,
+            'player1': player1,
+            'player2': player2
+        }
+        with open('savegame.pkl', 'wb') as f:
+            pickle.dump(game_state, f)
+        print("Game saved successfully.")
+
+    # Function to load the game state
+    def load_game(self):
+        try:
+            with open('savegame.pkl', 'rb') as f:
+                game_state = pickle.load(f)
+                print("Game loaded successfully.")
+                return game_state['board'], game_state['player1'], game_state['player2']
+        except FileNotFoundError:
+            print("No saved game found.")
+            return None, None, None
