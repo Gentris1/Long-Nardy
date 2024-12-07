@@ -60,15 +60,21 @@ width, height = 800, 600
 point_width = width // 14
 board_margin = point_width
 
-Menu.draw_menu(game, board)
 
 while running:
 
     mouse_x, mouse_y = pygame.mouse.get_pos()
     board.count_total_checkers()
+    if Menu.is_menu:
+        Menu.draw_menu(game, board)
     if board.black_total_checkers == 0 or board.white_total_checkers == 0:
+        if board.black_total_checkers == 0:
+            Menu.text_won = 'Black won!'
+        else:
+            Menu.text_won = 'White won!'
         game.reset_game(board)
-        # continue
+        Menu.is_menu = True
+
     game.make_move()
     Screen.draw_backgammon_board(board, game.player1, game.player2, mouse_x, mouse_y)
 

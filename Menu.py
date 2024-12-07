@@ -13,27 +13,31 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Long Nardy')
 
 class Menu:
+    is_menu = True
+    text_won = ''
     @staticmethod
     def draw_menu(game, board):
         screen.fill(BEIGE)
 
         font = pygame.font.SysFont(None, 72)
 
+        win_player_text = font.render(Menu.text_won, True, BLACK)
         name_text = font.render('Long Nardy', True, BLACK)
         start_text = font.render('Start Game', True, BLACK)
         load_text = font.render('Load Game', True, BLACK)
 
+        win_player_text_rect = win_player_text.get_rect()
         name_rect = name_text.get_rect()
         start_rect = start_text.get_rect()
         load_rect = load_text.get_rect()
 
         name_rect.center = (WIDTH // 2, HEIGHT // 2 - 150)
-
+        win_player_text_rect.center = (WIDTH // 2, HEIGHT // 2 - 265)
         start_rect.center = (WIDTH // 2, HEIGHT // 2 - 50)
         load_rect.center = (WIDTH // 2, HEIGHT // 2 + 50)
 
         screen.blit(name_text, name_rect)
-
+        screen.blit(win_player_text, win_player_text_rect)
         pygame.draw.rect(screen, GREY, start_rect.inflate(20, 20))
         pygame.draw.rect(screen, GREY, load_rect.inflate(20, 20))
 
@@ -54,9 +58,11 @@ class Menu:
 
                     if start_rect.inflate(20, 20).collidepoint(mouse_pos):
                         running = False
+                        Menu.is_menu = False
 
                     elif load_rect.inflate(20, 20).collidepoint(mouse_pos):
                         running = False
+                        Menu.is_menu = False
                         loaded_board, loaded_player1, loaded_player2 = game.load_game()
                         if loaded_board:
                             board.board = loaded_board.board
