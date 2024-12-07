@@ -68,7 +68,7 @@ class Screen:
                 Screen.draw_checker(x, y + i * checker_spacing, color)
 
     @staticmethod
-    # Main loop
+
     def draw_backgammon_board(board, player1: Player, player2, mouse_x, mouse_y):
         screen.fill(BEIGE)
         black_mouse_x, white_mouse_x = Screen.converte_coords(mouse_x, mouse_y,
@@ -152,7 +152,6 @@ class Screen:
 
     @staticmethod
     def draw_dice_dots(x, y, size, number):
-        """Рисует точки на кубике."""
         # Центр квадрата
         cx, cy = x + size // 2, y + size // 2
         radius = size // 10  # Радиус точек
