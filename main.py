@@ -123,5 +123,44 @@ while running:
 
                 print(f"Левая кнопка мыши нажата на позиции {event.pos}")
 
+        dict_num = {pygame.K_1: 1, pygame.K_2: 2, pygame.K_3: 3, pygame.K_4: 4, pygame.K_5: 5, pygame.K_6: 6}
+        if event.type == pygame.KEYDOWN:
+            if event.key in [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6]:
+                if game.player1.move_flag:
+                    if len(game.player1.remaining_moves) == 4:
+                        game.player1.remaining_moves.append(dict_num[event.key])
+                        game.player1.remaining_moves.pop(0)
+                        game.player1.remaining_moves.pop(0)
+                        game.player1.remaining_moves.pop(0)
+
+                        game.player1.dice_numbers.append(dict_num[event.key])
+                        game.player1.dice_numbers.pop(0)
+                        game.player1.dice_numbers.pop(0)
+                        game.player1.dice_numbers.pop(0)
+                    else:
+                        game.player1.remaining_moves.append(dict_num[event.key])
+                        game.player1.remaining_moves.pop(0)
+
+                        game.player1.dice_numbers.append(dict_num[event.key])
+                        game.player1.dice_numbers.pop(0)
+                else:
+                    if len(game.player2.remaining_moves) == 4:
+                        game.player2.remaining_moves.append(dict_num[event.key])
+                        game.player2.remaining_moves.pop(0)
+                        game.player2.remaining_moves.pop(0)
+                        game.player2.remaining_moves.pop(0)
+
+                        game.player2.dice_numbers.append(dict_num[event.key])
+                        game.player2.dice_numbers.pop(0)
+                        game.player2.dice_numbers.pop(0)
+                        game.player2.dice_numbers.pop(0)
+                    else:
+                        game.player2.remaining_moves.append(dict_num[event.key])
+                        game.player2.remaining_moves.pop(0)
+
+                        game.player2.dice_numbers.append(dict_num[event.key])
+                        game.player2.dice_numbers.pop(0)
+
+
 pygame.quit()
 sys.exit()
